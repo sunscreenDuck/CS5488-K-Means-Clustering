@@ -1,14 +1,11 @@
 package kmeans
 
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
+import csv.WriteCSV
 import org.apache.spark.ml.clustering.KMeans
 import org.apache.spark.ml.feature.{PCA, VectorAssembler}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import preprocess.StandardPlayerDataPreProcess
-
-import java.io.File
 
 
 class StandardPlayerClustering(std: DataFrame, adv: DataFrame, spark: SparkSession) {
@@ -28,7 +25,7 @@ class StandardPlayerClustering(std: DataFrame, adv: DataFrame, spark: SparkSessi
   }
 
 
-  private def cluster(ftDf: DataFrame): Unit = {
+  private def cluster(ftDf: DataFrame): DataFrame = {
     println("cluster:: start")
     val kMeans = new KMeans().setK(8).setSeed(1)
     val model = kMeans.fit(ftDf)
@@ -54,41 +51,8 @@ class StandardPlayerClustering(std: DataFrame, adv: DataFrame, spark: SparkSessi
       .withColumn("y", tailValue(pcaResult("pca_features")))
       .select("Player", "x", "y", "prediction")
     plotData.show(truncate = false)
-
-    // Export CSV
-    val srcDir = "/tmp/address"
-
-    // Write the DataFrame to CSV
-    plotData.repartition(1) // Consider the performance implications
-      .write.mode(SaveMode.Overwrite)
-      .option("header", "true")
-      .option("charset", "UTF-8")// Include header in CSV
-      .csv(srcDir)
-
-    val hadoopConfig = new Configuration()
-    val hdfs = FileSystem.get(hadoopConfig)
-
-    // Paths
-    val srcPath = new Path(srcDir)
-    val destPath = new Path("/tmp/standard_player.csv")
-
-    // List the files in the output directory
-    val srcFiles = FileUtil.listFiles(new File(srcDir))
-    val csvFiles = srcFiles.filter(_.getName.endsWith(".csv"))
-
-    // Check if any CSV files were created
-    if (csvFiles.nonEmpty) {
-      // Copy the first CSV file to the destination path
-      FileUtil.copy(new File(csvFiles.head.getPath), hdfs, destPath, true, hadoopConfig)
-    } else {
-      println("No CSV files found in the output directory.")
-    }
-
-    // Cleanup
-    hdfs.delete(srcPath, true) // Remove the temporary directory
-    hdfs.delete(new Path("/tmp/.standard_player.csv.crc"), true) // Remove CRC file if needed
-
     println("cluster:: end")
+    plotData
   }
 
   def kMeans(): Unit = {
@@ -101,7 +65,8 @@ class StandardPlayerClustering(std: DataFrame, adv: DataFrame, spark: SparkSessi
 
     // normalize
     val featuresDf = normalize(nbaDf, featureColumns)
-    cluster(featuresDf)
-
+    val plotData = cluster(featuresDf)
+    val fileName = "standard_player.csv"
+    val writer = new WriteCSV(plotData, fileName)
   }
 }
