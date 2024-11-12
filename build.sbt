@@ -15,5 +15,8 @@ lazy val root = project
       "org.apache.spark" %% "spark-core" % "3.5.1" % "provided",
       "org.apache.spark" %% "spark-hive" % "3.5.1" % "provided",
       "org.scala-lang" % "scala-reflect" % "2.13.14" % "provided",
+      "com.github.tototoshi" %% "scala-csv" % "1.3.10",
+      "org.scalanlp" %% "breeze" % "1.2",
+      "org.scalanlp" %% "breeze-viz" % "1.2"
     )
   )

@@ -10,12 +10,10 @@ object Main {
       .getOrCreate()
 
     val reader = new ReadCSV(spark)
-    val std = reader.standard()
     val adv = reader.advanced()
     val rookies = reader.rookies()
-    std.show()
 
-    val kMeans = new StandardPlayerClustering(std, adv, spark)
+    val kMeans = new StandardPlayerClustering(adv)
     kMeans.kMeans()
   }
 }
