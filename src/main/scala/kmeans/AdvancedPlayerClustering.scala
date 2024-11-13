@@ -14,9 +14,9 @@ class AdvancedPlayerClustering(df: DataFrame) {
   private final val columns = Array("Age", "G", "MP", "PER", "TS%", "3PAr", "FTr", "ORB%", "DRB%", "TRB%", "AST%", "STL%", "BLK%", "TOV%", "USG%", "OWS", "DWS", "WS", "WS/48", "OBPM", "DBPM", "BPM", "VORP")
 
   def kMeans(): Unit = {
-    val df = DataCleanser.process(df)
-    df.show(20, truncate = false)
-    val featureDf = Normalizer.normalize(df, columns)
+    val cleanDf = DataCleanser.process(df)
+    cleanDf.show(20, truncate = false)
+    val featureDf = Normalizer.normalize(cleanDf, columns)
     ClusteringOptimization.optimize(featureDf)
 
     // from the optimize analysis, we determined the optimal number of clusters are 5
