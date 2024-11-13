@@ -7,7 +7,7 @@ import org.apache.spark.ml.evaluation.ClusteringEvaluator
 import org.apache.spark.sql.DataFrame
 
 object ClusteringOptimization {
-  def optimize(featuredDf: DataFrame): Unit = {
+  def optimize(featuredDf: DataFrame, _type: String): Unit = {
     // List to store the results
     var results = List(("number_of_clusters", "Silhouette_distance", "WCSS_distance"))
     var silhouetteScores = Seq[(Int, Double)]()
@@ -43,7 +43,7 @@ object ClusteringOptimization {
     }
 
     // Write results to a CSV file
-    val outputFilePath = "src/main/resources/silhouette_scores.csv"
+    val outputFilePath = s"src/main/resources/${_type}_silhouette_scores.csv"
     val writer = CSVWriter.open(outputFilePath)
     writer.writeAll(results.map { case (k, s, w) => Seq(k, s, w) })
     writer.close()
@@ -61,6 +61,6 @@ object ClusteringOptimization {
     val tickInterval = (maxWcss - minWcss) / 5
     p.ylim(minWcss - tickInterval, maxWcss + tickInterval)
     p.setYAxisDecimalTickUnits()
-    f.saveas("src/main/resources/wcss_plot.png")
+    f.saveas(s"src/main/resources/${_type}_wcss_plot.png")
   }
 }
