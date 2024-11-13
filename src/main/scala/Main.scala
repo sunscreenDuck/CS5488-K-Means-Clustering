@@ -12,7 +12,8 @@ object Main {
     val reader = new ReadCSV(spark)
     val adv = reader.advanced()
     val rookies = reader.rookies()
-
+    println("xxx",rookies)
+    println(rookies.printSchema())
     AdvancedPlayerClustering.kMeans(adv)
     RookiesClustering.kMeans(rookies)
   }
