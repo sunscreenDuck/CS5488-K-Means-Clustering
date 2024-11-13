@@ -9,14 +9,13 @@ import org.apache.spark.sql.DataFrame
 import preprocess.DataCleanser
 
 
-class StandardPlayerClustering(adv: DataFrame) {
+class AdvancedPlayerClustering(df: DataFrame) {
   private final val resourcesFolder = "src/main/resources"
-
+  private final val columns = Array("Age", "G", "MP", "PER", "TS%", "3PAr", "FTr", "ORB%", "DRB%", "TRB%", "AST%", "STL%", "BLK%", "TOV%", "USG%", "OWS", "DWS", "WS", "WS/48", "OBPM", "DBPM", "BPM", "VORP")
 
   def kMeans(): Unit = {
-    val df = DataCleanser.process(adv)
+    val df = DataCleanser.process(df)
     df.show(20, truncate = false)
-    val columns = Array("Age", "G", "MP", "PER", "TS%", "3PAr", "FTr", "ORB%", "DRB%", "TRB%", "AST%", "STL%", "BLK%", "TOV%", "USG%", "OWS", "DWS", "WS", "WS/48", "OBPM", "DBPM", "BPM", "VORP")
     val featureDf = Normalizer.normalize(df, columns)
     ClusteringOptimization.optimize(featureDf)
 

@@ -1,5 +1,5 @@
 import csv.ReadCSV
-import kmeans.StandardPlayerClustering
+import kmeans.AdvancedPlayerClustering
 import org.apache.spark.sql.SparkSession
 
 object Main {
@@ -13,7 +13,7 @@ object Main {
     val adv = reader.advanced()
     val rookies = reader.rookies()
 
-    val kMeans = new StandardPlayerClustering(adv)
+    val kMeans = new AdvancedPlayerClustering(adv)
     kMeans.kMeans()
   }
 }
