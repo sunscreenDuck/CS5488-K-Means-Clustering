@@ -22,7 +22,7 @@ object RookiesClustering {
     // from the optimize analysis, we determined the optimal number of clusters are 5
     val optimalNumOfClusters = 3
     val (predictions, plotData) = ClusterBuilder.build(featureDf, optimalNumOfClusters,_type)
-    WriteCSV.writeDataFrame(plotData, "src/main/resources/cluster-plot-data/rookies_player.csv")
+    WriteCSV.writeDataFrame(plotData, s"src/main/resources/cluster-plot-data/${_type}_player.csv")
     val silhouette = Evaluator.silhouette(predictions)
     println(s"rookies player clustering silhouette score: $silhouette")
   }
