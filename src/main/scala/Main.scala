@@ -16,5 +16,6 @@ object Main {
     println(rookies.printSchema())
     AdvancedPlayerClustering.kMeans(adv)
     RookiesClustering.kMeans(rookies)
+    spark.close()
   }
 }
