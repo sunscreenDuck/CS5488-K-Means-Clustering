@@ -1,6 +1,6 @@
 package kmeans
 
-import cluster.ClusterBuilder
+import cluster_builder.ClusterBuilder
 import csv.WriteCSV
 import evaluator.Evaluator
 import normalize.Normalizer
@@ -10,7 +10,6 @@ import preprocess.DataCleanser
 
 
 object AdvancedPlayerClustering {
-  private final val resourcesFolder = "src/main/resources"
   private final val columns = Array("Age", "G", "MP", "PER", "TS%", "3PAr", "FTr", "ORB%", "DRB%", "TRB%", "AST%", "STL%", "BLK%", "TOV%", "USG%", "OWS", "DWS", "WS", "WS/48", "OBPM", "DBPM", "BPM", "VORP")
   private final val _type = "advanced"
 
@@ -22,8 +21,8 @@ object AdvancedPlayerClustering {
 
     // from the optimize analysis, we determined the optimal number of clusters are 5
     val optimalNumOfClusters = 5
-    val (predictions, plotData) = ClusterBuilder.build(featureDf, optimalNumOfClusters)
-    WriteCSV.writeDataFrame(plotData, s"${resourcesFolder}/standard_player.csv")
+    val (predictions, plotData) = ClusterBuilder.build(featureDf, optimalNumOfClusters, _type)
+    WriteCSV.writeDataFrame(plotData, "src/main/resources/cluster-plot-data/standard_player.csv")
     val silhouette = Evaluator.silhouette(predictions)
     println(s"standard player clustering silhouette score: $silhouette")
   }

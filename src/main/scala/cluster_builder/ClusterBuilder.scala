@@ -1,5 +1,6 @@
-package cluster
+package cluster_builder
 
+import com.github.tototoshi.csv._
 import org.apache.spark.ml.clustering.KMeans
 import org.apache.spark.ml.feature.PCA
 import org.apache.spark.sql.DataFrame
@@ -9,12 +10,14 @@ object ClusterBuilder {
   private val headValue = udf((arr: org.apache.spark.ml.linalg.Vector) => arr.toArray(0))
   private val tailValue = udf((arr: org.apache.spark.ml.linalg.Vector) => arr.toArray(1))
 
-  def build(df: DataFrame, optimalNumOfClusters: Int): (DataFrame, DataFrame) = {
+  def build(df: DataFrame, optimalNumOfClusters: Int, _type: String): (DataFrame, DataFrame) = {
     val kMeans = new KMeans().setK(optimalNumOfClusters).setSeed(1L)
     val model = kMeans.fit(df)
     val clusterCenters = model.clusterCenters
+    val writer = CSVWriter.open(s"src/main/resources/centers/${_type}_centers.csv", append = false)
     for (i <- clusterCenters.indices) {
       println(s"cluster:: cluster-$i, ${clusterCenters(i)}")
+      writer.writeRow(clusterCenters(i).toArray)
     }
     val predictions = model.transform(df)
     // pca

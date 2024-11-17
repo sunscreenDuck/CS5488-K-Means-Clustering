@@ -43,7 +43,7 @@ object ClusteringOptimization {
     }
 
     // Write results to a CSV file
-    val outputFilePath = s"src/main/resources/${_type}_silhouette_scores.csv"
+    val outputFilePath = s"src/main/resources/optimize/silhouette/${_type}_silhouette_scores.csv"
     val writer = CSVWriter.open(outputFilePath)
     writer.writeAll(results.map { case (k, s, w) => Seq(k, s, w) })
     writer.close()
@@ -61,6 +61,6 @@ object ClusteringOptimization {
     val tickInterval = (maxWcss - minWcss) / 5
     p.ylim(minWcss - tickInterval, maxWcss + tickInterval)
     p.setYAxisDecimalTickUnits()
-    f.saveas(s"src/main/resources/${_type}_wcss_plot.png")
+    f.saveas(s"src/main/resources/optimize/wcss/${_type}_wcss_plot.png")
   }
 }
