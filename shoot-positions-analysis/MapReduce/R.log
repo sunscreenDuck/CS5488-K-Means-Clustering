@@ -1,0 +1,10 @@
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+data <- read.csv("NBA_2004_2024_Shots/NBA data.csv")
+data <- data %>% mutate(Total_Made = Three.Made + Two.Made, Total_Attempted = Three.Attempts + Two.Attempts, Effective_Shooting_Percentage = (Total_Made + 0.5 * Three.Made) / Total_Attempted * 100, Three_Point_Percentage = (Three.Attempts / Total_Attempted) * 100)
+ggplot(data, aes(x = Season, y = Three_Point_Percentage)) + geom_line(color = "purple", linewidth = 1) + geom_point(color = "purple") + labs(title = "Three-Point Attempts per season", x = "Season", y = "Three-Point Attempts (%)") + theme_minimal() + theme(plot.title = element_text(hjust = 0.5),axis.text.x = element_text(angle = 45, hjust = 1))
+data_long <- data %>% pivot_longer(cols = c(Three.Attempts, Two.Attempts), names_to = "Type", values_to = "Attempts") %>% mutate(Type = recode(Type, "Three.Attempts" = "3pts", "Two.Attempts" = "2pts"))
+ggplot(data_long, aes(x = Season, y = Attempts, color = Type, group = Type)) + geom_line(linewidth = 1) + geom_point(size = 2) + labs(title = "Shooting over seasons", x = "Season", y = "Attempts") + scale_y_continuous(labels = scales::label_number(scale = 1e-3, suffix = "K")) + scale_color_manual(values = c("3pts" = "lightblue", "2pts" = "lightgreen")) + theme_minimal() + theme(plot.title = element_text(hjust = 0.5),axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(data, aes(x = Season, y = Effective_Shooting_Percentage)) + geom_line(color = "red", linewidth = 1) + geom_point(color = "red") + labs(title = "Effective Field Goal Percentage over seasons", x = "Season", y = "eFG(%)") + theme_minimal() + theme(plot.title = element_text(hjust = 0.5),axis.text.x = element_text(angle = 45, hjust = 1))

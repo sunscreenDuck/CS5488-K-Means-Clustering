@@ -1,0 +1,7 @@
+start-dfs.sh
+start-yarn.sh
+mr-jobhistory-daemon.sh start historyserver
+hdfs dfs -put NBA_2004_2024_Shots.csv
+chmod +x mapper.py reducer.py nohadoop.py
+hadoop jar /usr/local/hadoop-2.6.0/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -input NBA_2004_2024_Shots.csv -output ./out -mapper ~/Desktop/NBA/mapper.py -reducer ~/Desktop/NBA/reducer.py
+hdfs dfs -cat ./out/part-*
